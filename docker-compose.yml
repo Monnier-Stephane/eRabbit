@@ -1,0 +1,20 @@
+version: '3.8'
+services:
+  # Base de données pour l'auth et les commandes
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: eRabbit_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+
+  # Le serveur de messages (RabbitMQ)
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"   # Port pour le code JS
+      - "15672:15672" # Interface de gestion (login: guest / guest)
