@@ -1,0 +1,30 @@
+# Règles du projet ElectroShop (Architecture Microservices)
+
+## 1. Structure du Projet
+- Ce projet est composé de microservices Node.js indépendants.
+- Les services principaux : `auth-service`, `order-service`, `payment-worker`, `notification-service`.
+- Ne jamais mélanger les responsabilités : un service ne doit pas accéder directement à la base de données d'un autre service.
+
+## 2. Communication entre Services (RabbitMQ)
+- Toute action déclenchant un processus long (paiement, email) DOIT passer par RabbitMQ via la librairie `amqplib`.
+- Modèle : Le `order-service` est un **Producer** (publie dans la queue `ORDER_PLACED`). Les workers sont des **Consumers**.
+- Toujours vérifier que le canal (channel) RabbitMQ est bien ouvert avant d'envoyer un message.
+
+## 3. Base de données & Persistance
+- Utiliser PostgreSQL comme base de données principale.
+- Utiliser **Prisma ORM** pour toutes les interactions avec la base de données.
+- Chaque service possède son propre dossier `prisma/` et son propre schéma si nécessaire.
+
+## 4. Sécurité
+- Ne jamais stocker de secrets ou d'URLs de connexion en dur. Utiliser systématiquement `process.env`.
+- L'authentification entre le frontend et les services se fait via **JWT**.
+- Les mots de passe doivent être hachés avec **bcrypt**.
+
+## 5. Style de Code Node.js
+- Utiliser la syntaxe ES Modules (`import/export`) ou CommonJS (`require`) de manière cohérente (préférer CommonJS pour la compatibilité o2switch simple).
+- Utiliser des fonctions `async/await` pour toute opération asynchrone.
+- Toujours entourer les appels RabbitMQ et DB de blocs `try/catch`.
+
+## 6. Docker
+- Toute nouvelle dépendance système doit être reflétée dans le `docker-compose.yml`.
+- Le développement local se fait via `docker-compose up`.
