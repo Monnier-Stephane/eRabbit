@@ -1,2 +1,13 @@
+# Dépendances
+node_modules/
 
-/generated/prisma
+# Secrets et Config
+.env
+.env.local
+
+# Données Docker
+postgres_data/
+
+# Logs et divers
+npm-debug.log*
+.DS_Store

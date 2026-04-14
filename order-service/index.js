@@ -16,14 +16,15 @@ let channel;
 
 // Connexion à RabbitMQ
 async function connectRabbit() {
+    const rabbitUrl = process.env.RABBITMQ_URL || 'amqp://localhost';
     try {
-        // Sur Mac avec Docker Desktop, 'localhost' fonctionne généralement
-        const connection = await amqp.connect('amqp://localhost');
+        
+        const connection = await amqp.connect(rabbitUrl);
         channel = await connection.createChannel();
         await channel.assertQueue('order_queue');
         console.log("✅ Order Service connecté à RabbitMQ (ESM)");
     } catch (error) {
-        console.error("❌ Erreur RabbitMQ:", error.message);
+        console.error("Erreur RabbitMQ:", error.message);
     }
 }
 connectRabbit();
@@ -48,4 +49,4 @@ app.post('/orders', async (req, res) => {
 });
 
 const PORT = 3002;
-app.listen(PORT, () => console.log(`🚀 Order Service sur port ${PORT}`));
+app.listen(PORT, () => console.log(`Order Service sur port ${PORT}`));
