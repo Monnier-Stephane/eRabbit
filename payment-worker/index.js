@@ -11,8 +11,9 @@ const prisma = new PrismaClient({ adapter });
 async function demarrerWorker() {
     try {
         // Connexion au serveur RabbitMQ
-        const connexion = await amqp.connect('amqp://localhost');
-        const canal = await connexion.createChannel();
+        const rabbitUrl = process.env.RABBITMQ_URL || 'amqp://localhost';
+        const connection = await amqp.connect(rabbitUrl);
+        const canal = await connection.createChannel();
 
         const fileAttente = 'order_queue';
         await canal.assertQueue(fileAttente, { durable: true });
